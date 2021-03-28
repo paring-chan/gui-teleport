@@ -61,6 +61,10 @@ object TeleportInv {
                         }
                     }
                     onClickItem { _, _, _, item, _ ->
+                        if (item === player) {
+                            player.sendMessage("${ChatColor.RED}자신에게 TP할 수 없습니다.")
+                            return@onClickItem
+                        }
                         player.teleport(item.location)
                     }
                 }.let { view ->
