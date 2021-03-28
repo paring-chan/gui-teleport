@@ -1,6 +1,7 @@
 package com.github.pikokr.guitp.command
 
 import com.github.monun.kommand.KommandBuilder
+import com.github.monun.kommand.argument.integer
 import com.github.monun.kommand.argument.player
 import com.github.pikokr.guitp.plugin.GUITeleportPlugin
 import net.kyori.adventure.text.Component
@@ -29,6 +30,14 @@ object TeleportGUICommand {
                     executes {
                         val p = it.parseArgument<Player>("player")
                         p.inventory.addItem(item.clone())
+                    }
+                    then("amount" to integer()) {
+                        executes {
+                            val p = it.parseArgument<Player>("player")
+                            p.inventory.addItem(item.clone().apply {
+                                amount = it.parseArgument("amount")
+                            })
+                        }
                     }
                 }
             }
