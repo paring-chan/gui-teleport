@@ -5,3 +5,4 @@ api-version: '1.16'
 version: $version
 commands:
   tpgui:
+    permission: com.github.pikokr.tpgui.command

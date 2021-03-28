@@ -8,11 +8,17 @@ import org.bukkit.plugin.java.JavaPlugin
  * @author pikokr
  */
 class GUITeleportPlugin : JavaPlugin() {
+    companion object {
+        lateinit var instance: GUITeleportPlugin
+    }
+
     override fun onEnable() {
+        instance = this
         kommand {
             register("tpgui") {
                 TeleportGUICommand.register(this)
             }
         }
+        server.pluginManager.registerEvents(GUITeleportListener(), this)
     }
 }
