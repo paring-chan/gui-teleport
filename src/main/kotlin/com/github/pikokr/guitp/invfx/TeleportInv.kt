@@ -54,6 +54,9 @@ object TeleportInv {
                             itemMeta = (itemMeta as SkullMeta).apply {
                                 owningPlayer = it
                                 displayName(Component.text(it.name))
+                                if (it === player) {
+                                    lore(listOf(Component.text("${ChatColor.RED}자신에게 TP할 수 없습니다.")))
+                                }
                             }
                         }
                     }
