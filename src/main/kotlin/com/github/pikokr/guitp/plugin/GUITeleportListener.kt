@@ -13,7 +13,7 @@ class GUITeleportListener : Listener {
     fun onRightClickItem(event: PlayerInteractEvent) {
         event.item?.also {
             val meta = it.itemMeta
-            if (meta.persistentDataContainer.get(NamespacedKey(GUITeleportPlugin.instance, "type"), PersistentDataType.STRING) != "TP_PEARL") return
+            if (meta.persistentDataContainer.get(NamespacedKey(GUITeleportPlugin.instance, "type"), PersistentDataType.STRING) != "TP_MENU") return
         } ?: return
         event.isCancelled = true
         event.player.openWindow(TeleportInv.create(event.player))

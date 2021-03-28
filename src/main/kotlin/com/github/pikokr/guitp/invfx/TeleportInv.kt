@@ -12,46 +12,85 @@ import org.bukkit.inventory.meta.SkullMeta
 
 object TeleportInv {
     private val previousItem =
-        ItemStack(Material.END_CRYSTAL).apply { itemMeta = itemMeta.apply { displayName(Component.text("${ChatColor.RESET}${ChatColor.BOLD}←")) } }
+        ItemStack(Material.END_CRYSTAL).apply {
+            itemMeta = itemMeta.apply { displayName(Component.text("${ChatColor.RESET}${ChatColor.BOLD}←")) }
+        }
     private val nextItem =
-        ItemStack(Material.END_CRYSTAL).apply { itemMeta = itemMeta.apply { displayName(Component.text("${ChatColor.RESET}${ChatColor.BOLD}→")) } }
+        ItemStack(Material.END_CRYSTAL).apply {
+            itemMeta = itemMeta.apply { displayName(Component.text("${ChatColor.RESET}${ChatColor.BOLD}→")) }
+        }
+
+    private val guideBook = ItemStack(Material.BOOK).apply {
+        itemMeta = itemMeta.apply {
+            displayName(Component.text("설명서"))
+            lore(
+                listOf(
+                    Component.text(
+                        ChatColor.translateAlternateColorCodes(
+                            '&',
+                            "&f&l플레이어의 머리를 클릭할 시 플레이어에게 티피 합니다."
+                        )
+                    )
+                )
+            )
+        }
+    }
+
+    val firstIgnoreList = arrayOf(4)
+    val lastIgnoreList = arrayOf(3, 4, 5)
+
+    private val glass = ItemStack(Material.BLUE_STAINED_GLASS_PANE).apply {
+        itemMeta = itemMeta.apply {
+            displayName(Component.text(""))
+        }
+    }
 
     fun create(player: Player): InvScene {
-        return InvFX.scene(1, "${ChatColor.DARK_BLUE}TELEPORT") {
-            panel(0, 0, 9, 1) {
-                listView(2, 0, 5, 1, true, listOf(player, player, player)) {
-                    transform { ItemStack(Material.PLAYER_HEAD).apply {
-                        itemMeta = (itemMeta as SkullMeta).apply {
-                            owningPlayer = it
-                            displayName(Component.text(player.name))
+        return InvFX.scene(3, "${ChatColor.DARK_BLUE}TELEPORT") {
+            panel(0, 0, 9, 3) {
+                listView(1, 1, 7, 1, true, Bukkit.getOnlinePlayers().toList()) {
+                    transform {
+                        ItemStack(Material.PLAYER_HEAD).apply {
+                            itemMeta = (itemMeta as SkullMeta).apply {
+                                owningPlayer = it
+                                displayName(Component.text(it.name))
+                            }
                         }
-                    } }
+                    }
+                    onClickItem { _, _, _, item, _ ->
+                        player.teleport(item.location)
+                    }
                 }.let { view ->
-                    button(1, 0) {
+                    button(3, 2) {
                         onInit {
                             it.item = previousItem
                         }
-                        onClick { _ , _ ->
+                        onClick { _, _ ->
                             view.index--
                         }
                     }
-                    button(8, 0) {
+                    button(5, 2) {
                         onInit {
                             it.item = nextItem
                         }
-                        onClick { _ , _ ->
+                        onClick { _, _ ->
                             view.index++
                         }
                     }
                 }
-            }.let { panel ->
-                panel.setItem(0, 0, ItemStack(Material.BOOK).apply {
-                    itemMeta = itemMeta.apply {
-                        displayName(Component.text("도움말"))
-                        lore(listOf(Component.text("플레이어를 선택해 이동하세요"), Component.text("엔드 크리스탈을 클릭해 스크롤 가능합니다.")))
-                    }
-                })
             }
+                .let { panel ->
+                    panel.setItem(4, 2, guideBook)
+                    for (i in 0..8) {
+                        panel.setItem(i, 0, glass)
+                    }
+                    panel.setItem(0, 1, glass)
+                    panel.setItem(8, 1, glass)
+                    for (i in 0..8) {
+                        if (lastIgnoreList.contains(i)) continue
+                        panel.setItem(i, 2, glass)
+                    }
+                }
         }
     }
 }
