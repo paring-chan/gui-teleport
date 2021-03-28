@@ -39,8 +39,7 @@ object TeleportInv {
         }
     }
 
-    val firstIgnoreList = arrayOf(4)
-    val lastIgnoreList = arrayOf(3, 4, 5)
+    private val lastIgnoreList = arrayOf(3, 4, 5)
 
     private val glass = ItemStack(Material.BLUE_STAINED_GLASS_PANE).apply {
         itemMeta = itemMeta.apply {
