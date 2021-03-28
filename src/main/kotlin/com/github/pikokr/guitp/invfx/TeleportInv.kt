@@ -2,13 +2,16 @@ package com.github.pikokr.guitp.invfx
 
 import com.github.monun.invfx.InvFX
 import com.github.monun.invfx.InvScene
+import com.github.pikokr.guitp.plugin.GUITeleportPlugin
 import net.kyori.adventure.text.Component
 import org.bukkit.Bukkit
 import org.bukkit.ChatColor
 import org.bukkit.Material
+import org.bukkit.NamespacedKey
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
 import org.bukkit.inventory.meta.SkullMeta
+import org.bukkit.persistence.PersistentDataType
 
 object TeleportInv {
     private val previousItem =
@@ -61,10 +64,17 @@ object TeleportInv {
                         }
                     }
                     onClickItem { _, _, _, item, _ ->
+                        val book = player.inventory.contents.find {
+                            it?.itemMeta?.persistentDataContainer?.get(NamespacedKey(GUITeleportPlugin.instance, "type"), PersistentDataType.STRING) == "TP_MENU"
+                        } ?: return@onClickItem player.sendMessage("${ChatColor.RED}남아있는 TP권이 없습니다.")
+
                         if (item === player) {
                             player.sendMessage("${ChatColor.RED}자신에게 TP할 수 없습니다.")
                             return@onClickItem
                         }
+
+                        book.amount--
+
                         player.teleport(item.location)
                     }
                 }.let { view ->
